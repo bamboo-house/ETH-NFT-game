@@ -56,4 +56,29 @@ contract MyEpicGame is ERC721 {
     // 次のNFTのためにカウンターをインクリメントする
     _tokenIds.increment();
   }
+
+  // ユーザーは mintCharacterNFT 関数を呼び出した、NFTをMintすることができる
+  // _characterIndexはフロントエンドから送信される
+  function mintCharacterNFT(uint _characterIndex) external {
+    uint256 newItemId = _tokenIds.current();
+
+    // msg.sender でフロントエンドからユーザーのアドレスを取得して、NFTをユーザーにMintする
+    _safeMint(msg.sender, newItemId);
+
+    nftHolderAttributes[newItemId] = CharacterAttributes({
+      characterIndex: _characterIndex,
+      name: defaultCharacters[_characterIndex].imageURI,
+      imageURI: defaultCharacters[_characterIndex].imageURI,
+      hp: defaultCharacters[_characterIndex].hp,
+      maxHp: defaultCharacters[_characterIndex].maxHp,
+      attackDamage: defaultCharacters[_characterIndex].attackDamage
+    });
+
+    console.log("Minted NFT w/ tokenId %s and characterIndex %s", newItemId, _characterIndex);
+
+    // NFTの所有者を簡単に確認できるようにする。
+    nftHolders[msg.sender] = newItemId;
+
+    _tokenIds.increment();
+  }
 }
