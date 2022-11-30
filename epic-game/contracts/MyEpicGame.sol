@@ -67,7 +67,7 @@ contract MyEpicGame is ERC721 {
 
     nftHolderAttributes[newItemId] = CharacterAttributes({
       characterIndex: _characterIndex,
-      name: defaultCharacters[_characterIndex].imageURI,
+      name: defaultCharacters[_characterIndex].name,
       imageURI: defaultCharacters[_characterIndex].imageURI,
       hp: defaultCharacters[_characterIndex].hp,
       maxHp: defaultCharacters[_characterIndex].maxHp,

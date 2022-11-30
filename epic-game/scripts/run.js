@@ -12,6 +12,16 @@ const main = async () => {
   );
   await gameContract.deployed();
   console.log("Contract deployed to:", gameContract.address);
+
+  let txn;
+  txn = await gameContract.mintCharacterNFT(2);
+
+  // Mining が仮想マイナーにより、承認されるのを待ちます。
+  await txn.wait();
+
+  // NFTのURIの値を取得します。tokenURIはERC721から継承した関数です。
+  let returnedTokenUri = await gameContract.tokenURI(1);
+  console.log("Token URI:", returnedTokenUri);
 };
 
 const runMain = async () => {
