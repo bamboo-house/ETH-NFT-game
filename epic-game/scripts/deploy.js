@@ -1,31 +1,43 @@
-// We require the Hardhat Runtime Environment explicitly here. This is optional
-// but useful for running the script in a standalone fashion through `node <script>`.
-//
-// You can also run a script with `npx hardhat run <script>`. If you do that, Hardhat
-// will compile your contracts, add the Hardhat Runtime Environment's members to the
-// global scope, and execute the script.
-const hre = require("hardhat");
-
-async function main() {
-  const currentTimestampInSeconds = Math.round(Date.now() / 1000);
-  const ONE_YEAR_IN_SECS = 365 * 24 * 60 * 60;
-  const unlockTime = currentTimestampInSeconds + ONE_YEAR_IN_SECS;
-
-  const lockedAmount = hre.ethers.utils.parseEther("1");
-
-  const Lock = await hre.ethers.getContractFactory("Lock");
-  const lock = await Lock.deploy(unlockTime, { value: lockedAmount });
-
-  await lock.deployed();
-
-  console.log(
-    `Lock with 1 ETH and unlock timestamp ${unlockTime} deployed to ${lock.address}`
+const main = async () => {
+  const gameContractFactory = await hre.ethers.getContractFactory("MyEpicGame");
+  const gameContract = await gameContractFactory.deploy(
+    ["ZORO", "NAMI", "USOPP"], // キャラクターの名前
+    [
+      "https://i.imgur.com/TZEhCTX.png", // キャラクターの画像
+      "https://i.imgur.com/WVAaMPA.png",
+      "https://i.imgur.com/pCMZeiM.png",
+    ],
+    [100, 200, 300], // キャラクターのHP
+    [100, 50, 25] // キャラクターの攻撃力
   );
-}
+  await gameContract.deployed();
+  console.log("Contract deployed to:", gameContract.address);
 
-// We recommend this pattern to be able to use async/await everywhere
-// and properly handle errors.
-main().catch((error) => {
-  console.error(error);
-  process.exitCode = 1;
-});
+  let txn;
+
+  txn = await gameContract.mintCharacterNFT(0);
+  await txn.wait();
+  console.log("Minted NFT #1");
+
+  txn = await gameContract.mintCharacterNFT(1);
+  await txn.wait();
+  console.log("Minted NFT #2");
+
+  txn = await gameContract.mintCharacterNFT(2);
+  await txn.wait();
+  console.log("Minted NFT #3");
+
+  console.log("Done deploying and minting!");
+};
+
+const runMain = async () => {
+  try {
+    await main();
+    process.exit(0);
+  } catch (error) {
+    console.log(error);
+    process.exit(1);
+  }
+};
+
+runMain();
