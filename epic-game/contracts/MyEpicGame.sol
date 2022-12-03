@@ -18,6 +18,16 @@ contract MyEpicGame is ERC721 {
     uint attackDamage;
   }
 
+  struct BigBoss {
+    string name;
+    string imageURI;
+    uint hp;
+    uint maxHp;
+    uint attackDamage;
+  }
+  
+  BigBoss public bigBoss;
+
   // tokenIdsを簡単に追跡するライブラリを呼び出す
   using Counters for Counters.Counter;
   Counters.Counter private _tokenIds;
@@ -36,7 +46,11 @@ contract MyEpicGame is ERC721 {
     string[] memory characterNames,
     string[] memory characterImageURIs,
     uint[] memory characterHp,
-    uint[] memory characterAttackDmg
+    uint[] memory characterAttackDmg,
+    string memory bossName,
+    string memory bossImageURI,
+    uint bossHp,
+    uint bossAttackDamage
   ) ERC721("OnePiece", "ONEPIECE") {
     // ゲームで扱うすべてのキャラクターをループ処理で呼び出し、それぞれのキャラクターに付与されるデフォルト値をコントラクトに保存する。
     // 後でNFTを作成する際に使用する
@@ -53,6 +67,16 @@ contract MyEpicGame is ERC721 {
       console.log("Done initializing %s w/ HP %s, img %s", character.name, character.hp, character.imageURI);
     }
 
+    //　ボスを初期化する。ボスの情報をグローバル状態変数"bigBoss"に保存する。
+    bigBoss = BigBoss({
+      name: bossName,
+      imageURI: bossImageURI,
+      hp: bossHp,
+      maxHp: bossHp,
+      attackDamage: bossAttackDamage
+    });
+    console.log("Done initializing boss %s w/ HP %s, img %s", bigBoss.name, bigBoss.hp, bigBoss.imageURI);
+    
     // 次のNFTのためにカウンターをインクリメントする
     _tokenIds.increment();
   }
