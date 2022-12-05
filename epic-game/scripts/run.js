@@ -26,6 +26,12 @@ const main = async () => {
   // NFTのURIの値を取得します。tokenURIはERC721から継承した関数です。
   let returnedTokenUri = await gameContract.tokenURI(1);
   console.log("Token URI:", returnedTokenUri);
+
+  txn = await gameContract.attackBoss();
+  await txn.wait();
+
+  txn = await gameContract.attackBoss();
+  await txn.wait();
 };
 
 const runMain = async () => {
