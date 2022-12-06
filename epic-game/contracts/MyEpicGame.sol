@@ -41,6 +41,11 @@ contract MyEpicGame is ERC721 {
   // ユーザーのアドレスとNFTのtokenIdを紐づける
   mapping(address => uint256) public nftHolders;
 
+  // ユーザーがNFTをMintしたことを示すイベント
+  event CharacterNFTMinted(address sender, uint256 tokenId, uint256 characterIndex);
+  // ボスへの攻撃が完了したことを示すイベント
+  event AttackComplete(uint newBossHp, uint newPlayerHp);
+
   constructor(
     // プレイヤーが新しく NFT キャラクターをMintする際に、キャラクターを初期化するために渡されるデータを設定しています。これらの値はフロントエンドから渡されます
     string[] memory characterNames,
@@ -162,5 +167,25 @@ contract MyEpicGame is ERC721 {
 
     console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
     console.log("Boss attacked player. New player hp: %s\n", player.hp);
+  }
+
+  function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {
+    uint256 userNftTokenId = nftHolders[msg.sender];
+
+    if (userNftTokenId > 0) {
+      return nftHolderAttributes[userNftTokenId];
+    } else {
+      CharacterAttributes memory emptyStruct;
+      return emptyStruct;
+    }
+  }
+
+  // キャラクター選択画面
+  function getAllDefaultCharacters() public view returns (CharacterAttributes[] memory) {
+    return defaultCharacters;
+  }
+
+  function getBigBoss() public view returns (BigBoss memory) {
+    return bigBoss;
   }
 }
