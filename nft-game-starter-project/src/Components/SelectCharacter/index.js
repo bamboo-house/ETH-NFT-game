@@ -3,7 +3,7 @@ import "./SelectCharacter.css";
 
 const SelectCharacter = ({ setCharacterNFT }) => {
   return (
-    <div classNmae="select-character-container">
+    <div className="select-character-container">
       <h2>⏬ 一緒に戦う NFT キャラクターを選択 ⏬</h2>
     </div>
   );

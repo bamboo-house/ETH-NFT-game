@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
+import SelectCharacter from './Components/SelectCharacter';
 
 // Constants
 const TWITTER_HANDLE = 'あなたのTwitterハンドル';
@@ -8,6 +9,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
+  const [characterNFT, setCharacterNFT] = useState(null);
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -30,6 +32,25 @@ const App = () => {
       console.log(error);
     }
   };
+
+    // レンダリングメソッド
+    const renderContent = () => {
+      if (!currentAccount) {
+        return (
+          <div className="connect-wallet-container">
+            <img src="https://i.imgur.com/TXBQ4cC.png" alt="LUFFY"/>
+            <button
+              className="cta-button connect-wallet-button"
+              onClick={connectWalletAction}
+            >
+              Connect Wallet to Get Started
+            </button>
+          </div>
+        );
+      } else if (currentAccount && !characterNFT) {
+        return <SelectCharacter setCharacterNFT={setCharacterNFT} />
+      }
+    };
 
   const connectWalletAction = async () => {
     try {
@@ -56,20 +77,9 @@ const App = () => {
     <div className="App">
       <div className="container">
         <div className="header-container">
-        <p className="header gradient-text">⚡️ METAVERSE GAME ⚡️</p>
+          <p className="header gradient-text">⚡️ METAVERSE GAME ⚡️</p>
           <p className="sub-text">プレイヤーと協力してボスを倒そう✨</p>
-          <div className="connect-wallet-container">
-            <img
-              src="https://i.imgur.com/TXBQ4cC.png"
-              alt="LUFFY"
-            />
-          </div>
-          <button
-            className="cta-button connect-wallet-button"
-            onClick={connectWalletAction}
-          >
-            Connect Wallet To Get Started
-          </button>
+          {renderContent()}
         </div>
         <div className="footer-container">
           <img alt="Twitter Logo" className="twitter-logo" src={twitterLogo} />
