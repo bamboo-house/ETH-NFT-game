@@ -2,6 +2,9 @@ import React, { useEffect, useState } from 'react';
 import twitterLogo from './assets/twitter-logo.svg';
 import './App.css';
 import SelectCharacter from './Components/SelectCharacter';
+import { CONTRACT_ADDRESS } from './constants';
+import { ethers } from "ethers";
+import myEpicGame from "./utils/MyEpicGame.json";
 
 // Constants
 const TWITTER_HANDLE = 'あなたのTwitterハンドル';
@@ -10,6 +13,18 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [characterNFT, setCharacterNFT] = useState(null);
+
+  const checkNetwork = async () => {
+    try {
+      if (window.ethereum.networkVersion !== "80001") {
+        alert("Mumbai Test Network に接続してください！");
+      } else {
+        console.log("Mumbai に接続されています.");
+      }
+    } catch (error) {
+      console.log(error);
+    }
+  };
 
   const checkIfWalletIsConnected = async () => {
     try {
@@ -60,11 +75,15 @@ const App = () => {
         return;
       }
 
+      checkIfWalletIsConnected();
+
       const accounts = await ethereum.request({
         method: "eth_requestAccounts",
       });
       console.log("Connected", accounts[0]);
       setCurrentAccount(accounts[0]);
+      
+      checkNetwork();
     } catch (error) {
       console.log(error);
     }
@@ -73,6 +92,34 @@ const App = () => {
   useEffect(() => {
     checkIfWalletIsConnected();
   }, []);
+
+  useEffect(() => {
+    const fetchNFTMetadata = async () => {
+      console.log("Checking for Character NFT on address:", currentAccount);
+
+      const provider = new ethers.providers.Web3Provider(window.ethereum);
+      const signer = provider.getSigner();
+      const gameContract = new ethers.Contract(
+        CONTRACT_ADDRESS,
+        myEpicGame.abi,
+        signer
+      );
+
+      const txn = await gameContract.checkIfUserHasNFT();
+      if (txn.name) {
+        console.log("User has character NFT");
+        setCharacterNFT(transformCharacterData(txn));
+      } else {
+        console.log("No character NFT found");
+      }
+    };
+
+    if (currentAccount) {
+      console.log("CurrentAccount:", currentAccount);
+      fetchNFTMetadata();
+    }
+  }, [currentAccount]);
+
   return (
     <div className="App">
       <div className="container">
