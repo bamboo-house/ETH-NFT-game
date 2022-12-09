@@ -47,9 +47,27 @@ const SelectCharacter = ({ setCharacterNFT }) => {
     }
   }, [gameContract]);
 
+  const renderCharacters = () => 
+    characters.map((character, index) => (
+      <div className="character-item" key={character.name}>
+        <div className="name-container">
+          <p>{character.name}</p>
+        </div>
+        <img src={character.imageURI} alt={character.name} />
+        <button
+          type="button"
+          className="character-mint-button"
+          // onClick={mintCharacterNFTAction(index)}
+        >{`Mint ${character.name}`}</button>
+      </div>
+    ));
+
   return (
     <div className="select-character-container">
       <h2>⏬ 一緒に戦う NFT キャラクターを選択 ⏬</h2>
+      {characters.length >0 && (
+        <div className="character-grid">{renderCharacters()} </div> // 配列を埋め込み展開できる
+      )}
     </div>
   );
 };
