@@ -48,16 +48,32 @@ const SelectCharacter = ({ setCharacterNFT }) => {
 
         const characters = charactersTxn.map((characterData) => transformCharacterData(characterData));
 
-        console.log("characters:", characters)
         setCharacters(characters);
       } catch (error) {
         console.error("Something went wrong fetching characters:", error);
       }
     };
 
+    const onCharacterMint = async (sender, tokenId, characterIndex) => {
+      console.log(`CharacterNFTMinted - sender: ${sender} tokenId: ${tokenId.toNumber()} characterIndex: ${characterIndex.toNumber()}`);
+
+      if (gameContract) {
+        const characterNFT = await gameContract.checkIfUserHasNFT();
+        console.log("CharacterNFT: ", characterNFT);
+        setCharacterNFT(transformCharacterData(characterNFT));
+      }
+    };
+
     if (gameContract) {
       getCharacters();
+      gameContract.on("CharacterNFTMinted", onCharacterMint);
     }
+
+    return () => {
+      if (gameContract) {
+        gameContract.off("CharacterNFTMinted", onCharacterMint);
+      }
+    };
   }, [gameContract]);
 
   const renderCharacters = () => 
