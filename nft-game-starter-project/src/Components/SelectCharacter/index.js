@@ -62,6 +62,12 @@ const SelectCharacter = ({ setCharacterNFT }) => {
         console.log("CharacterNFT: ", characterNFT);
         setCharacterNFT(transformCharacterData(characterNFT));
       }
+
+      alert(
+        `NFT キャラクターが Mint されました -- リンクはこちらです: https://testnets.opensea.io/assets/${
+          gameContract.address
+        }/${tokenId.toNumber()}`
+      );
     };
 
     if (gameContract) {
