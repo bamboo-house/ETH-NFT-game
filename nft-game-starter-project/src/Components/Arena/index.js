@@ -7,6 +7,8 @@ import "./Arena.css";
 const Arena = ({ characterNFT }) => {
   // コントラクトのデータを保有する状態変数を初期化します。
   const [gameContract, setGameContract] = useState(null);
+  const [boss, setBoss] = useState(null);
+
   // ページがロードされると下記が実行されます。
   useEffect(() => {
     const { ethereum } = window;
@@ -23,6 +25,20 @@ const Arena = ({ characterNFT }) => {
       console.log("Ethereum object not found");
     }
   }, []);
+
+  useEffect(() => {
+    const fetchBoss = async () => {
+      const bossTxn = await gameContract.getBigBoss();
+      console.log("Boss:", bossTxn);
+      setBoss(transformCharacterData(bossTxn));
+    };
+
+    if (gameContract) {
+      fetchBoss();
+    }
+  }, [gameContract]);
+
+
   return (
     <div className="arena-container">
       {/* ボス */}
