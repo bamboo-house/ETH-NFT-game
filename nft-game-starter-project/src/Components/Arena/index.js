@@ -8,8 +8,26 @@ const Arena = ({ characterNFT }) => {
   // コントラクトのデータを保有する状態変数を初期化します。
   const [gameContract, setGameContract] = useState(null);
   const [boss, setBoss] = useState(null);
+  const [attackState, setAttackState] = useState("");
 
-  const runAttackAction = async () => {};
+  const runAttackAction = async () => {
+    try {
+      if (gameContract) {
+        setAttackState("attacking");
+        console.log("Attacking boss...");
+
+        const attackTxn = await gameContract.attackBoss();
+
+        await attackTxn.wait();
+        console.log("attackTxn: ", attackTxn);
+
+        setAttackState("hit");
+      }
+    } catch (error) {
+      console.error("Error attacking boss:", error);
+      setAttackState("");
+    }
+  };
 
   // ページがロードされると下記が実行されます。
   useEffect(() => {
@@ -45,7 +63,7 @@ const Arena = ({ characterNFT }) => {
     <div className="arena-container">
       {boss && (
         <div className="boss-container">
-          <div className={`boss-content`}>
+          <div className={`boss-content ${attackState}`}>
             <h2>🔥 {boss.name} 🔥</h2>
             <div className="image-content">
               <img src={boss.imageURI} alt={`Boss ${boss.name}`} />
