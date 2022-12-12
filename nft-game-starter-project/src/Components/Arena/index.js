@@ -9,6 +9,8 @@ const Arena = ({ characterNFT }) => {
   const [gameContract, setGameContract] = useState(null);
   const [boss, setBoss] = useState(null);
 
+  const runAttackAction = async () => {};
+
   // ページがロードされると下記が実行されます。
   useEffect(() => {
     const { ethereum } = window;
@@ -41,8 +43,25 @@ const Arena = ({ characterNFT }) => {
 
   return (
     <div className="arena-container">
-      {/* ボス */}
-      <p>ボスを表示します。</p>
+      {boss && (
+        <div className="boss-container">
+          <div className={`boss-content`}>
+            <h2>🔥 {boss.name} 🔥</h2>
+            <div className="image-content">
+              <img src={boss.imageURI} alt={`Boss ${boss.name}`} />
+              <div className="health-bar">
+                <progress value={boss.hp} max={boss.maxHp} />
+                <p>{`${boss.hp} / ${boss.maxHp} HP`}</p>
+              </div>
+            </div>
+          </div>
+          <div className="attack-container">
+            <button className="cta-button" onClick={runAttackAction}>
+              {`💥 Attack ${boss.name}`}
+            </button>
+          </div>
+        </div>
+      )}
       {/* NFT キャラクター */}
       <p>NFT キャラクターを表示します。</p>
     </div>
