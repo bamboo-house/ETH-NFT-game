@@ -109,6 +109,8 @@ contract MyEpicGame is ERC721 {
     nftHolders[msg.sender] = newItemId;
 
     _tokenIds.increment();
+    emit CharacterNFTMinted(msg.sender, newItemId, _characterIndex);
+
   }
 
   function tokenURI(uint256 _tokenId) public view override returns (string memory) {
@@ -167,6 +169,8 @@ contract MyEpicGame is ERC721 {
 
     console.log("Player attacked boss. New boss hp: %s", bigBoss.hp);
     console.log("Boss attacked player. New player hp: %s\n", player.hp);
+    
+    emit AttackComplete(bigBoss.hp, player.hp);
   }
 
   function checkIfUserHasNFT() public view returns (CharacterAttributes memory) {

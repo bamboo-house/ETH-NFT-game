@@ -4,7 +4,7 @@ import { CONTRACT_ADDRESS, transformCharacterData } from "../../constants";
 import myEpicGame from "../../utils/MyEpicGame.json";
 import "./Arena.css";
 // フロントエンドにNFTキャラクターを表示するため、characterNFTのメタデータを渡します。
-const Arena = ({ characterNFT }) => {
+const Arena = ({ characterNFT, setCharacterNFT }) => {
   // コントラクトのデータを保有する状態変数を初期化します。
   const [gameContract, setGameContract] = useState(null);
   const [boss, setBoss] = useState(null);
@@ -53,9 +53,30 @@ const Arena = ({ characterNFT }) => {
       setBoss(transformCharacterData(bossTxn));
     };
 
+    const onAttackComplete = (newBossHp, newPlayerHp) => {
+      const bossHp = newBossHp.toNumber();
+
+      const playerHp = newPlayerHp.toNumber();
+      console.log(`AttackComplete: Boss Hp: ${bossHp} Player Hp: ${playerHp}`);
+
+      setBoss((prevState) => {
+        return { ...prevState, hp: bossHp };
+      });
+      setCharacterNFT((prevState) => {
+        return { ...prevState, hp: playerHp };
+      });
+    }
+
     if (gameContract) {
       fetchBoss();
+      gameContract.on("AttackComplete", onAttackComplete);
     }
+
+    return () => {
+      if (gameContract) {
+        gameContract.off("AttackComplete", onAttackComplete);
+      }
+    };
   }, [gameContract]);
 
 
