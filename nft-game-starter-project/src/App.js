@@ -6,6 +6,7 @@ import { CONTRACT_ADDRESS, transformCharacterData } from './constants';
 import { ethers } from "ethers";
 import myEpicGame from "./utils/MyEpicGame.json";
 import Arena from "./Components/Arena";
+import LoadingIndicator from "./Components/LoadingIndicator";
 
 // Constants
 const TWITTER_HANDLE = 'あなたのTwitterハンドル';
@@ -14,6 +15,7 @@ const TWITTER_LINK = `https://twitter.com/${TWITTER_HANDLE}`;
 const App = () => {
   const [currentAccount, setCurrentAccount] = useState(null);
   const [characterNFT, setCharacterNFT] = useState(null);
+  const [isLoading, setIsLoading] = useState(false);
 
   const checkNetwork = async () => {
     try {
@@ -32,6 +34,8 @@ const App = () => {
       const { ethereum } = window;
       if (!ethereum) {
         console.log("Make sure you have MetaMask!");
+
+        setIsLoading(false);
         return;
       } else {
         console.log("We have the ethereum object", ethereum);
@@ -47,10 +51,14 @@ const App = () => {
     } catch (error) {
       console.log(error);
     }
+    setIsLoading(false);
   };
 
     // レンダリングメソッド
     const renderContent = () => {
+      if (isLoading) {
+        return <LoadingIndicator/>;
+      }
       if (!currentAccount) {
         return (
           <div className="connect-wallet-container">
@@ -93,6 +101,7 @@ const App = () => {
   };
 
   useEffect(() => {
+    setIsLoading(true);
     checkIfWalletIsConnected();
   }, []);
 
@@ -115,6 +124,7 @@ const App = () => {
       } else {
         console.log("No character NFT found");
       }
+      setIsLoading(false);
     };
 
     if (currentAccount) {
